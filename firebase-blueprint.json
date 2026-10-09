@@ -1,0 +1,61 @@
+{
+  "entities": {
+    "Pop": {
+      "title": "Pop",
+      "description": "A 12/12 POP profile created by an NYSC corper",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Corper display name or nickname",
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "UID of the owner corper"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation server timestamp"
+        },
+        "question": {
+          "type": "string",
+          "description": "Prompt question shown on the 12/12 card",
+          "maxLength": 100
+        }
+      },
+      "required": ["name", "ownerId", "createdAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "An anonymous message sent to a corper's 12/12 POP link",
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The message body text",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation server timestamp"
+        }
+      },
+      "required": ["text", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/pops/{slug}": {
+      "schema": "Pop",
+      "description": "Collection of corper 12/12 pop links"
+    },
+    "/pops/{slug}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Subcollection of anonymous messages sent to a corper"
+    }
+  }
+}

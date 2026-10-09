@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidPop(data) {
+      return data.keys().hasAll(['name', 'ownerId', 'createdAt']) &&
+        data.keys().hasOnly(['name', 'ownerId', 'createdAt', 'question']) &&
+        data.name is string && data.name.size() >= 1 && data.name.size() <= 30 &&
+        data.ownerId is string && data.ownerId == request.auth.uid &&
+        (!('question' in data) || (data.question is string && data.question.size() <= 100));
+    }
+
+    function isValidMessage(data) {
+      return data.keys().hasAll(['text', 'createdAt']) &&
+        data.keys().hasOnly(['text', 'createdAt']) &&
+        data.text is string && data.text.size() >= 1 && data.text.size() <= 300 &&
+        data.createdAt == request.time;
+    }
+
+    function isPopOwner(slug) {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/pops/$(slug)) &&
+        get(/databases/$(database)/documents/pops/$(slug)).data.ownerId == request.auth.uid;
+    }
+
+    match /pops/{slug} {
+      allow get: if isValidId(slug);
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isValidId(slug) && isSignedIn() &&
+        incoming().createdAt == request.time &&
+        isValidPop(incoming());
+      allow update: if isValidId(slug) && isSignedIn() &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        isValidPop(incoming());
+      allow delete: if isValidId(slug) && isSignedIn() &&
+        existing().ownerId == request.auth.uid;
+
+      match /messages/{messageId} {
+        allow create: if isValidId(messageId) &&
+          exists(/databases/$(database)/documents/pops/$(slug)) &&
+          isValidMessage(incoming());
+        allow get, delete: if isValidId(messageId) && isPopOwner(slug);
+        allow list: if isPopOwner(slug);
+      }
+    }
+  }
+}
