@@ -2,6 +2,7 @@
  * CorperWe Firebase Client Configuration & Service Handlers
  */
 import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAnalytics, isSupported } from 'firebase/analytics';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import {
   getFirestore,
@@ -29,6 +30,13 @@ import firebaseConfig from '../../firebase-applet-config.json';
 
 // Initialize Firebase App
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
+export let analytics: ReturnType<typeof getAnalytics> | null = null;
+isSupported()
+  .then((ok) => {
+    if (ok && firebaseConfig.measurementId) analytics = getAnalytics(app);
+  })
+  .catch(() => {});
 
 // CRITICAL: Initialize Firestore with the database ID specified in configuration
 export const db = initializeFirestore(
