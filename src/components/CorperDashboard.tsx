@@ -478,14 +478,7 @@ export const CorperDashboard: React.FC<CorperDashboardProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => onViewVisitorPage(pop.slug)}
-            className="text-xs text-[#d9a520] hover:text-white bg-black/20 hover:bg-black/40 px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 transition-all cursor-pointer border border-[#d9a520]/30"
-            title="Preview as visitor"
-          >
-            <Eye className="w-3.5 h-3.5" />
-            Visitor View
-          </button>
+         
           <button
             onClick={() => logOut()}
             className="text-white/60 hover:text-white p-1.5 rounded-lg hover:bg-black/20 transition-all cursor-pointer"
