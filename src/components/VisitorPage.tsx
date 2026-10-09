@@ -11,6 +11,7 @@
  * - Strict privacy: zero tracking, no IP/device storage, no login
  */
 import React, { useState, useEffect } from 'react';
+import { track } from '../lib/analytics';
 import confetti from 'canvas-confetti';
 import { Send, CheckCircle2, AlertCircle, Clock, PlusCircle } from 'lucide-react';
 import { getPopBySlug, sendAnonymousMessage } from '../lib/firebase';
@@ -106,6 +107,7 @@ export const VisitorPage: React.FC<VisitorPageProps> = ({ slug, onNavigateHome }
       setErrorMsg(null);
       await sendAnonymousMessage(slug, messageText.trim());
       recordVisitorSend(slug);
+      track('message_sent');
       setSentSuccess(true);
       setMessageText('');
 

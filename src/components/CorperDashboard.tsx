@@ -46,6 +46,7 @@ import {
 import { ShareCard } from './ShareCard';
 import { InboxMessageCard } from './InboxMessageCard';
 import { PopProfile, PopMessageItem } from '../types';
+import { track } from '../lib/analytics';
 import {
   getWelcomeInboxMessages,
   WelcomeMessage,
@@ -197,6 +198,7 @@ export const CorperDashboard: React.FC<CorperDashboardProps> = ({
       const questionToUse = customQuestion.trim() || selectedQuestion;
 
       await createPopDoc(chosenSlug, inputName.trim(), user.uid, questionToUse);
+      track('link_created');
 
       const newPop: PopProfile = {
         slug: chosenSlug,
@@ -357,7 +359,9 @@ export const CorperDashboard: React.FC<CorperDashboardProps> = ({
             <h1 className="text-2xl font-black tracking-tight text-white">
               Create Your 12/12 Link
             </h1>
-            
+            <p className="text-xs text-[#f6f1e0]/80 mt-1 leading-relaxed">
+              Get an NGL-style NYSC card to share on WhatsApp & Instagram for anonymous POP messages!
+            </p>
           </div>
 
           <form onSubmit={handleCreatePop} className="flex flex-col gap-4">
@@ -370,12 +374,14 @@ export const CorperDashboard: React.FC<CorperDashboardProps> = ({
                 type="text"
                 value={inputName}
                 onChange={(e) => setInputName(e.target.value.slice(0, 30))}
-                placeholder="e.g. Ada, Chidi, or Tunde"
+                placeholder="e.g. Ada, Chidi, or Corper Tunde"
                 className="w-full bg-white text-gray-900 font-bold px-4 py-3.5 rounded-2xl focus:outline-none focus:ring-4 focus:ring-[#d9a520] text-base placeholder-gray-400"
                 maxLength={30}
                 required
               />
-           
+              <p className="text-[11px] text-[#f6f1e0]/70 mt-1 pl-1">
+                Will be displayed as <strong className="text-[#d9a520]">{formatCorperName(inputName || 'Your Name')}</strong>
+              </p>
             </div>
 
             {/* Question Preset Selection */}
@@ -465,12 +471,21 @@ export const CorperDashboard: React.FC<CorperDashboardProps> = ({
             <span className="text-xl font-black tracking-tight text-[#f6f1e0] block leading-tight">
               CorperWe
             </span>
-           
+            <span className="text-[10px] text-[#d9a520] font-bold block -mt-0.5">
+              {corperDisplayName}
+            </span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-        
+          <button
+            onClick={() => onViewVisitorPage(pop.slug)}
+            className="text-xs text-[#d9a520] hover:text-white bg-black/20 hover:bg-black/40 px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 transition-all cursor-pointer border border-[#d9a520]/30"
+            title="Preview as visitor"
+          >
+            <Eye className="w-3.5 h-3.5" />
+            Visitor View
+          </button>
           <button
             onClick={() => logOut()}
             className="text-white/60 hover:text-white p-1.5 rounded-lg hover:bg-black/20 transition-all cursor-pointer"
@@ -619,7 +634,9 @@ export const CorperDashboard: React.FC<CorperDashboardProps> = ({
                 Share My 12/12 Card
               </button>
 
-             
+              <div className="text-[10px] text-[#f6f1e0]/50 pt-1">
+                (Official welcome from CorperWe arrives ~2 mins after link creation)
+              </div>
             </div>
           ) : (
             /* Messages List */

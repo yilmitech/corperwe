@@ -13,6 +13,7 @@
  */
 import React, { useRef, useState } from 'react';
 import { toPng } from 'html-to-image';
+import { track } from '../lib/analytics';
 import confetti from 'canvas-confetti';
 import {
   Download,
@@ -109,6 +110,7 @@ export const ShareCard: React.FC<ShareCardProps> = ({
       link.download = `CorperWe-12-12-${slug}.png`;
       link.href = card.dataUrl;
       link.click();
+      track('card_downloaded');
 
       confetti({
         particleCount: 80,
