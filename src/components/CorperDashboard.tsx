@@ -619,9 +619,7 @@ export const CorperDashboard: React.FC<CorperDashboardProps> = ({
                 Share My 12/12 Card
               </button>
 
-              <div className="text-[10px] text-[#f6f1e0]/50 pt-1">
-                (Official welcome from CorperWe arrives ~2 mins after link creation)
-              </div>
+             
             </div>
           ) : (
             /* Messages List */
