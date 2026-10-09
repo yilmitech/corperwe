@@ -471,9 +471,7 @@ export const CorperDashboard: React.FC<CorperDashboardProps> = ({
             <span className="text-xl font-black tracking-tight text-[#f6f1e0] block leading-tight">
               CorperWe
             </span>
-            <span className="text-[10px] text-[#d9a520] font-bold block -mt-0.5">
-              {corperDisplayName}
-            </span>
+            
           </div>
         </div>
 
